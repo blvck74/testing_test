@@ -10,6 +10,14 @@ using MonitoringShiftApp.Models;
 
 namespace MonitoringShiftApp.ViewModels;
 
+public enum NavigationState
+{
+    ShowTopics,
+    ShowSubtopics,
+    ShowInformationList,
+    ShowInformationDetail
+}
+
 public partial class DepartmentGViewModel : ViewModelBase
 {
     private readonly AppDbContext _context;
@@ -27,6 +35,9 @@ public partial class DepartmentGViewModel : ViewModelBase
     private DepartmentGInformation? _selectedInformation;
 
     [ObservableProperty]
+    private NavigationState _currentState = NavigationState.ShowTopics;
+
+    [ObservableProperty]
     private string _newTopicName = string.Empty;
 
     [ObservableProperty]
@@ -41,10 +52,29 @@ public partial class DepartmentGViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isEditingInformation;
 
+    [ObservableProperty]
+    private string _currentTitle = "Темы";
+
+    // Computed properties for UI visibility
+    public bool ShowTopicsView => CurrentState == NavigationState.ShowTopics;
+    public bool ShowSubtopicsView => CurrentState == NavigationState.ShowSubtopics;
+    public bool ShowInformationListView => CurrentState == NavigationState.ShowInformationList;
+    public bool ShowInformationDetailView => CurrentState == NavigationState.ShowInformationDetail;
+    public bool CanGoBack => CurrentState != NavigationState.ShowTopics;
+
     public DepartmentGViewModel(AppDbContext context)
     {
         _context = context;
         _ = LoadTopics();
+    }
+
+    partial void OnCurrentStateChanged(NavigationState value)
+    {
+        OnPropertyChanged(nameof(ShowTopicsView));
+        OnPropertyChanged(nameof(ShowSubtopicsView));
+        OnPropertyChanged(nameof(ShowInformationListView));
+        OnPropertyChanged(nameof(ShowInformationDetailView));
+        OnPropertyChanged(nameof(CanGoBack));
     }
 
     [RelayCommand]
@@ -81,6 +111,9 @@ public partial class DepartmentGViewModel : ViewModelBase
 
         Topics.Add(topic);
         NewTopicName = string.Empty;
+        
+        // Обновляем интерфейс
+        OnPropertyChanged(nameof(Topics));
     }
 
     [RelayCommand]
@@ -102,6 +135,9 @@ public partial class DepartmentGViewModel : ViewModelBase
 
         SelectedTopic.Subtopics.Add(subtopic);
         NewSubtopicName = string.Empty;
+        
+        // Обновляем интерфейс
+        OnPropertyChanged(nameof(SelectedTopic));
     }
 
     [RelayCommand]
@@ -125,6 +161,9 @@ public partial class DepartmentGViewModel : ViewModelBase
         SelectedSubtopic.Information.Add(information);
         NewInformationTitle = string.Empty;
         NewInformationContent = string.Empty;
+        
+        // Обновляем интерфейс
+        OnPropertyChanged(nameof(SelectedSubtopic));
     }
 
     [RelayCommand]
@@ -170,6 +209,12 @@ public partial class DepartmentGViewModel : ViewModelBase
         SelectedTopic = topic;
         SelectedSubtopic = null;
         SelectedInformation = null;
+        
+        if (topic != null)
+        {
+            CurrentState = NavigationState.ShowSubtopics;
+            CurrentTitle = $"Подтемы: {topic.Name}";
+        }
     }
 
     [RelayCommand]
@@ -177,5 +222,47 @@ public partial class DepartmentGViewModel : ViewModelBase
     {
         SelectedSubtopic = subtopic;
         SelectedInformation = null;
+        
+        if (subtopic != null)
+        {
+            CurrentState = NavigationState.ShowInformationList;
+            CurrentTitle = $"Информация: {subtopic.Name}";
+        }
+    }
+
+    [RelayCommand]
+    private void SelectInformation(DepartmentGInformation? information)
+    {
+        SelectedInformation = information;
+        
+        if (information != null)
+        {
+            CurrentState = NavigationState.ShowInformationDetail;
+            CurrentTitle = information.Title;
+        }
+    }
+
+    [RelayCommand]
+    private void GoBack()
+    {
+        switch (CurrentState)
+        {
+            case NavigationState.ShowSubtopics:
+                CurrentState = NavigationState.ShowTopics;
+                CurrentTitle = "Темы";
+                SelectedTopic = null;
+                break;
+            case NavigationState.ShowInformationList:
+                CurrentState = NavigationState.ShowSubtopics;
+                CurrentTitle = SelectedTopic != null ? $"Подтемы: {SelectedTopic.Name}" : "Подтемы";
+                SelectedSubtopic = null;
+                break;
+            case NavigationState.ShowInformationDetail:
+                CurrentState = NavigationState.ShowInformationList;
+                CurrentTitle = SelectedSubtopic != null ? $"Информация: {SelectedSubtopic.Name}" : "Информация";
+                SelectedInformation = null;
+                IsEditingInformation = false;
+                break;
+        }
     }
 }

@@ -8,180 +8,258 @@
     <vm:DepartmentGViewModel/>
   </Design.DataContext>
 
-  <Grid ColumnDefinitions="250,250,*" Margin="20">
+  <Grid Margin="20">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
     
-    <!-- Topics Panel -->
-    <Border Grid.Column="0"
-            Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-            CornerRadius="8"
-            Padding="15"
-            Margin="0,0,10,0">
-      
-      <StackPanel Spacing="15">
-        
-        <TextBlock Text="Темы"
-                   FontSize="18"
-                   FontWeight="SemiBold"/>
-        
-        <!-- Add Topic -->
-        <StackPanel Spacing="8">
-          <TextBox Text="{Binding NewTopicName}"
-                   Watermark="Название темы"
-                   FontSize="12"/>
-          <Button Content="Добавить тему"
-                  Command="{Binding AddTopicCommand}"
-                  HorizontalAlignment="Stretch"
-                  FontSize="11"/>
-        </StackPanel>
-        
-        <!-- Topics List -->
-        <ScrollViewer Height="500">
-          <ItemsControl ItemsSource="{Binding Topics}">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate>
-                <Button Content="{Binding Name}"
-                        Command="{Binding $parent[UserControl].((vm:DepartmentGViewModel)DataContext).SelectTopicCommand}"
-                        CommandParameter="{Binding}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Margin="0,2"
-                        Padding="10,8"
-                        FontSize="12"/>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
-        </ScrollViewer>
-        
-      </StackPanel>
-    </Border>
-    
-    <!-- Subtopics Panel -->
-    <Border Grid.Column="1"
-            Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-            CornerRadius="8"
-            Padding="15"
-            Margin="5,0"
-            IsVisible="{Binding SelectedTopic, Converter={x:Static ObjectConverters.IsNotNull}}">
-      
-      <StackPanel Spacing="15">
-        
-        <TextBlock Text="Подтемы"
-                   FontSize="18"
-                   FontWeight="SemiBold"/>
-        
-        <!-- Add Subtopic -->
-        <StackPanel Spacing="8">
-          <TextBox Text="{Binding NewSubtopicName}"
-                   Watermark="Название подтемы"
-                   FontSize="12"/>
-          <Button Content="Добавить подтему"
-                  Command="{Binding AddSubtopicCommand}"
-                  HorizontalAlignment="Stretch"
-                  FontSize="11"/>
-        </StackPanel>
-        
-        <!-- Subtopics List -->
-        <ScrollViewer Height="500">
-          <ItemsControl ItemsSource="{Binding SelectedTopic.Subtopics}">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate>
-                <Button Content="{Binding Name}"
-                        Command="{Binding $parent[UserControl].((vm:DepartmentGViewModel)DataContext).SelectSubtopicCommand}"
-                        CommandParameter="{Binding}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Margin="0,2"
-                        Padding="10,8"
-                        FontSize="12"/>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
-        </ScrollViewer>
-        
-      </StackPanel>
-    </Border>
-    
-    <!-- Information Panel -->
-    <Border Grid.Column="2"
+    <!-- Header with navigation -->
+    <Border Grid.Row="0"
             Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
             CornerRadius="8"
             Padding="20"
-            Margin="10,0,0,0"
-            IsVisible="{Binding SelectedSubtopic, Converter={x:Static ObjectConverters.IsNotNull}}">
+            Margin="0,0,0,15">
+      <Grid ColumnDefinitions="Auto,*,Auto">
+        
+        <!-- Back Button -->
+        <Button Grid.Column="0"
+                Content="← Назад"
+                Command="{Binding GoBackCommand}"
+                IsVisible="{Binding CanGoBack}"
+                Margin="0,0,15,0"
+                Padding="15,8"
+                FontSize="14"/>
+        
+        <!-- Title -->
+        <TextBlock Grid.Column="1"
+                   Text="{Binding CurrentTitle}"
+                   FontSize="24"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center"/>
+        
+      </Grid>
+    </Border>
+    
+    <!-- Content Area -->
+    <Border Grid.Row="1"
+            Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+            CornerRadius="8"
+            Padding="20">
       
-      <StackPanel Spacing="15">
-        
-        <TextBlock Text="Информация"
-                   FontSize="18"
-                   FontWeight="SemiBold"/>
-        
-        <!-- Add Information -->
-        <StackPanel Spacing="10" IsVisible="{Binding !IsEditingInformation}">
-          <TextBox Text="{Binding NewInformationTitle}"
-                   Watermark="Заголовок информации"
-                   FontSize="12"/>
-          <TextBox Text="{Binding NewInformationContent}"
-                   Watermark="Содержание информации"
-                   AcceptsReturn="True"
-                   TextWrapping="Wrap"
-                   Height="100"
-                   FontSize="12"/>
-          <Button Content="Добавить информацию"
-                  Command="{Binding AddInformationCommand}"
-                  HorizontalAlignment="Stretch"
-                  FontSize="11"/>
-        </StackPanel>
-        
-        <!-- Edit Information -->
-        <StackPanel Spacing="10" IsVisible="{Binding IsEditingInformation}">
-          <TextBox Text="{Binding NewInformationTitle}"
-                   FontSize="12"/>
-          <TextBox Text="{Binding NewInformationContent}"
-                   AcceptsReturn="True"
-                   TextWrapping="Wrap"
-                   Height="200"
-                   FontSize="12"/>
-          <StackPanel Orientation="Horizontal" Spacing="10">
-            <Button Content="Сохранить"
-                    Command="{Binding UpdateInformationCommand}"
-                    Background="#4CAF50"
-                    FontSize="11"/>
-            <Button Content="Отмена"
-                    Command="{Binding CancelEditCommand}"
-                    FontSize="11"/>
+      <Grid>
+        <!-- Topics View -->
+        <StackPanel Spacing="20" IsVisible="{Binding ShowTopicsView}">
+          
+          <!-- Add Topic -->
+          <StackPanel Spacing="10">
+            <TextBlock Text="Добавить новую тему"
+                       FontSize="16"
+                       FontWeight="Medium"/>
+            <TextBox Text="{Binding NewTopicName}"
+                     Watermark="Название темы"
+                     FontSize="14"
+                     MaxWidth="400"
+                     HorizontalAlignment="Left"/>
+            <Button Content="Добавить тему"
+                    Command="{Binding AddTopicCommand}"
+                    HorizontalAlignment="Left"
+                    Padding="20,10"
+                    FontSize="14"/>
           </StackPanel>
+          
+          <!-- Topics List -->
+          <StackPanel Spacing="10">
+            <TextBlock Text="Выберите тему:"
+                       FontSize="16"
+                       FontWeight="Medium"/>
+            <ScrollViewer MaxHeight="500">
+              <ItemsControl ItemsSource="{Binding Topics}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Button Content="{Binding Name}"
+                            Command="{Binding $parent[UserControl].((vm:DepartmentGViewModel)DataContext).SelectTopicCommand}"
+                            CommandParameter="{Binding}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Margin="0,5"
+                            Padding="20,15"
+                            FontSize="16"
+                            Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"/>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </StackPanel>
+          
         </StackPanel>
         
-        <!-- Information List -->
-        <ScrollViewer Height="300">
-          <ItemsControl ItemsSource="{Binding SelectedSubtopic.Information}">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate>
-                <Border Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
-                        CornerRadius="4"
-                        Padding="15"
-                        Margin="0,0,0,10">
-                  <StackPanel Spacing="8">
-                    <TextBlock Text="{Binding Title}"
-                               FontWeight="Medium"
-                               FontSize="14"/>
-                    <TextBlock Text="{Binding Content}"
-                               TextWrapping="Wrap"
-                               FontSize="12"/>
-                    <Button Content="Редактировать"
-                            Command="{Binding $parent[UserControl].((vm:DepartmentGViewModel)DataContext).EditInformationCommand}"
+        <!-- Subtopics View -->
+        <StackPanel Spacing="20" IsVisible="{Binding ShowSubtopicsView}">
+          
+          <!-- Add Subtopic -->
+          <StackPanel Spacing="10">
+            <TextBlock Text="Добавить новую подтему"
+                       FontSize="16"
+                       FontWeight="Medium"/>
+            <TextBox Text="{Binding NewSubtopicName}"
+                     Watermark="Название подтемы"
+                     FontSize="14"
+                     MaxWidth="400"
+                     HorizontalAlignment="Left"/>
+            <Button Content="Добавить подтему"
+                    Command="{Binding AddSubtopicCommand}"
+                    HorizontalAlignment="Left"
+                    Padding="20,10"
+                    FontSize="14"/>
+          </StackPanel>
+          
+          <!-- Subtopics List -->
+          <StackPanel Spacing="10">
+            <TextBlock Text="Выберите подтему:"
+                       FontSize="16"
+                       FontWeight="Medium"/>
+            <ScrollViewer MaxHeight="500">
+              <ItemsControl ItemsSource="{Binding SelectedTopic.Subtopics}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Button Content="{Binding Name}"
+                            Command="{Binding $parent[UserControl].((vm:DepartmentGViewModel)DataContext).SelectSubtopicCommand}"
                             CommandParameter="{Binding}"
-                            HorizontalAlignment="Left"
-                            FontSize="10"
-                            Padding="8,4"/>
-                  </StackPanel>
-                </Border>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
-        </ScrollViewer>
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Margin="0,5"
+                            Padding="20,15"
+                            FontSize="16"
+                            Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"/>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </StackPanel>
+          
+        </StackPanel>
         
-      </StackPanel>
+        <!-- Information List View -->
+        <StackPanel Spacing="20" IsVisible="{Binding ShowInformationListView}">
+          
+          <!-- Add Information -->
+          <StackPanel Spacing="10" IsVisible="{Binding !IsEditingInformation}">
+            <TextBlock Text="Добавить новую информацию"
+                       FontSize="16"
+                       FontWeight="Medium"/>
+            <TextBox Text="{Binding NewInformationTitle}"
+                     Watermark="Заголовок информации"
+                     FontSize="14"
+                     MaxWidth="500"
+                     HorizontalAlignment="Left"/>
+            <TextBox Text="{Binding NewInformationContent}"
+                     Watermark="Содержание информации"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     Height="120"
+                     FontSize="14"
+                     MaxWidth="500"
+                     HorizontalAlignment="Left"/>
+            <Button Content="Добавить информацию"
+                    Command="{Binding AddInformationCommand}"
+                    HorizontalAlignment="Left"
+                    Padding="20,10"
+                    FontSize="14"/>
+          </StackPanel>
+          
+          <!-- Information List -->
+          <StackPanel Spacing="10">
+            <TextBlock Text="Выберите информацию:"
+                       FontSize="16"
+                       FontWeight="Medium"/>
+            <ScrollViewer MaxHeight="400">
+              <ItemsControl ItemsSource="{Binding SelectedSubtopic.Information}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Button Command="{Binding $parent[UserControl].((vm:DepartmentGViewModel)DataContext).SelectInformationCommand}"
+                            CommandParameter="{Binding}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Margin="0,5"
+                            Padding="20,15"
+                            Background="{DynamicResource SystemControlBackgroundChromeLowBrush}">
+                      <StackPanel Spacing="5">
+                        <TextBlock Text="{Binding Title}"
+                                   FontWeight="Medium"
+                                   FontSize="16"/>
+                        <TextBlock Text="{Binding Content}"
+                                   TextWrapping="Wrap"
+                                   FontSize="12"
+                                   Opacity="0.7"
+                                   MaxHeight="40"
+                                   TextTrimming="CharacterEllipsis"/>
+                      </StackPanel>
+                    </Button>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </StackPanel>
+          
+        </StackPanel>
+        
+        <!-- Information Detail View -->
+        <StackPanel Spacing="20" IsVisible="{Binding ShowInformationDetailView}">
+          
+          <!-- Edit Information -->
+          <StackPanel Spacing="15" IsVisible="{Binding IsEditingInformation}">
+            <TextBlock Text="Редактирование информации"
+                       FontSize="18"
+                       FontWeight="Medium"/>
+            <TextBox Text="{Binding NewInformationTitle}"
+                     FontSize="14"
+                     MaxWidth="500"
+                     HorizontalAlignment="Left"/>
+            <TextBox Text="{Binding NewInformationContent}"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     Height="300"
+                     FontSize="14"
+                     MaxWidth="700"
+                     HorizontalAlignment="Left"/>
+            <StackPanel Orientation="Horizontal" Spacing="15">
+              <Button Content="Сохранить"
+                      Command="{Binding UpdateInformationCommand}"
+                      Background="#4CAF50"
+                      Foreground="White"
+                      Padding="20,10"
+                      FontSize="14"/>
+              <Button Content="Отмена"
+                      Command="{Binding CancelEditCommand}"
+                      Padding="20,10"
+                      FontSize="14"/>
+            </StackPanel>
+          </StackPanel>
+          
+          <!-- Display Information -->
+          <StackPanel Spacing="15" IsVisible="{Binding !IsEditingInformation}">
+            <TextBlock Text="{Binding SelectedInformation.Title}"
+                       FontSize="24"
+                       FontWeight="SemiBold"
+                       TextWrapping="Wrap"/>
+            <ScrollViewer MaxHeight="400">
+              <TextBlock Text="{Binding SelectedInformation.Content}"
+                         FontSize="16"
+                         TextWrapping="Wrap"
+                         LineHeight="24"/>
+            </ScrollViewer>
+            <Button Content="Редактировать"
+                    Command="{Binding EditInformationCommand}"
+                    CommandParameter="{Binding SelectedInformation}"
+                    HorizontalAlignment="Left"
+                    Padding="20,10"
+                    FontSize="14"/>
+          </StackPanel>
+          
+        </StackPanel>
+      </Grid>
+      
     </Border>
     
   </Grid>

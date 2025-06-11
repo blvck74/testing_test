@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отдел Г - Новый интерфейс</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .back-button {
+            background: #e0e0e0;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .back-button:hover {
+            background: #d0d0d0;
+        }
+        
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .content {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .input-group {
+            margin-bottom: 10px;
+        }
+        
+        .input-group input, .input-group textarea {
+            width: 100%;
+            max-width: 400px;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .input-group textarea {
+            height: 120px;
+            resize: vertical;
+            max-width: 500px;
+        }
+        
+        .add-button {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .add-button:hover {
+            background: #005a9e;
+        }
+        
+        .items-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .item-button {
+            width: 100%;
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            padding: 15px 20px;
+            margin: 5px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+        
+        .item-button:hover {
+            background: #e8e8e8;
+        }
+        
+        .info-item {
+            padding: 15px 20px;
+            margin: 5px 0;
+            border-radius: 4px;
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+        }
+        
+        .info-item:hover {
+            background: #e8e8e8;
+        }
+        
+        .info-title {
+            font-weight: 500;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .info-preview {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .detail-view {
+            max-width: 700px;
+        }
+        
+        .detail-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .detail-content {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #fafafa;
+            border-radius: 4px;
+        }
+        
+        .edit-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .edit-button:hover {
+            background: #218838;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .view {
+            display: none;
+        }
+        
+        .view.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <button class="back-button" id="backButton" style="display: none;">← Назад</button>
+            <h1 class="title" id="pageTitle">Темы</h1>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Topics View -->
+            <div class="view active" id="topicsView">
+                <div class="section">
+                    <div class="section-title">Добавить новую тему</div>
+                    <div class="input-group">
+                        <input type="text" placeholder="Название темы" id="newTopicInput">
+                    </div>
+                    <button class="add-button" onclick="addTopic()">Добавить тему</button>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">Выберите тему:</div>
+                    <div class="items-list" id="topicsList">
+                        <button class="item-button" onclick="selectTopic('Безопасность')">Безопасность</button>
+                        <button class="item-button" onclick="selectTopic('Процедуры')">Процедуры</button>
+                        <button class="item-button" onclick="selectTopic('Документооборот')">Документооборот</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Subtopics View -->
+            <div class="view" id="subtopicsView">
+                <div class="section">
+                    <div class="section-title">Добавить новую подтему</div>
+                    <div class="input-group">
+                        <input type="text" placeholder="Название подтемы" id="newSubtopicInput">
+                    </div>
+                    <button class="add-button" onclick="addSubtopic()">Добавить подтему</button>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">Выберите подтему:</div>
+                    <div class="items-list" id="subtopicsList">
+                        <button class="item-button" onclick="selectSubtopic('Пожарная безопасность')">Пожарная безопасность</button>
+                        <button class="item-button" onclick="selectSubtopic('Информационная безопасность')">Информационная безопасность</button>
+                        <button class="item-button" onclick="selectSubtopic('Охрана труда')">Охрана труда</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Information List View -->
+            <div class="view" id="informationListView">
+                <div class="section">
+                    <div class="section-title">Добавить новую информацию</div>
+                    <div class="input-group">
+                        <input type="text" placeholder="Заголовок информации" id="newInfoTitleInput">
+                    </div>
+                    <div class="input-group">
+                        <textarea placeholder="Содержание информации" id="newInfoContentInput"></textarea>
+                    </div>
+                    <button class="add-button" onclick="addInformation()">Добавить информацию</button>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">Выберите информацию:</div>
+                    <div class="items-list" id="informationList">
+                        <div class="info-item" onclick="selectInformation('Инструкция по эвакуации', 'Подробная инструкция по действиям при пожаре и эвакуации персонала из здания...')">
+                            <div class="info-title">Инструкция по эвакуации</div>
+                            <div class="info-preview">Подробная инструкция по действиям при пожаре и эвакуации персонала из здания...</div>
+                        </div>
+                        <div class="info-item" onclick="selectInformation('Правила использования огнетушителей', 'Руководство по правильному применению различных типов огнетушителей...')">
+                            <div class="info-title">Правила использования огнетушителей</div>
+                            <div class="info-preview">Руководство по правильному применению различных типов огнетушителей...</div>
+                        </div>
+                        <div class="info-item" onclick="selectInformation('Контакты экстренных служб', 'Список телефонов пожарной службы, службы безопасности и других экстренных служб...')">
+                            <div class="info-title">Контакты экстренных служб</div>
+                            <div class="info-preview">Список телефонов пожарной службы, службы безопасности и других экстренных служб...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Information Detail View -->
+            <div class="view" id="informationDetailView">
+                <div class="detail-view">
+                    <div class="detail-title" id="detailTitle">Инструкция по эвакуации</div>
+                    <div class="detail-content" id="detailContent">
+                        <p><strong>1. При обнаружении пожара:</strong></p>
+                        <ul>
+                            <li>Немедленно сообщите в пожарную службу по телефону 101</li>
+                            <li>Оповестите всех сотрудников о необходимости эвакуации</li>
+                            <li>Отключите электроприборы, если это безопасно</li>
+                        </ul>
+                        
+                        <p><strong>2. Порядок эвакуации:</strong></p>
+                        <ul>
+                            <li>Сохраняйте спокойствие, не паникуйте</li>
+                            <li>Двигайтесь к ближайшему эвакуационному выходу</li>
+                            <li>Не пользуйтесь лифтами</li>
+                            <li>Помогайте коллегам, особенно людям с ограниченными возможностями</li>
+                        </ul>
+                        
+                        <p><strong>3. На месте сбора:</strong></p>
+                        <ul>
+                            <li>Соберитесь в назначенном месте сбора</li>
+                            <li>Проведите перекличку сотрудников</li>
+                            <li>Сообщите руководителю о результатах переклички</li>
+                            <li>Ожидайте дальнейших указаний</li>
+                        </ul>
+                        
+                        <p><strong>Важно помнить:</strong> Ваша безопасность важнее любого имущества. Не возвращайтесь в здание до получения разрешения от пожарной службы.</p>
+                    </div>
+                    <button class="edit-button">Редактировать</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentView = 'topics';
+        let currentTopic = '';
+        let currentSubtopic = '';
+        
+        function showView(viewName) {
+            // Hide all views
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            
+            // Show selected view
+            document.getElementById(viewName + 'View').classList.add('active');
+            
+            // Update back button visibility
+            const backButton = document.getElementById('backButton');
+            if (viewName === 'topics') {
+                backButton.style.display = 'none';
+            } else {
+                backButton.style.display = 'block';
+            }
+            
+            currentView = viewName;
+        }
+        
+        function updateTitle(title) {
+            document.getElementById('pageTitle').textContent = title;
+        }
+        
+        function selectTopic(topicName) {
+            currentTopic = topicName;
+            updateTitle('Подтемы: ' + topicName);
+            showView('subtopics');
+        }
+        
+        function selectSubtopic(subtopicName) {
+            currentSubtopic = subtopicName;
+            updateTitle('Информация: ' + subtopicName);
+            showView('informationList');
+        }
+        
+        function selectInformation(title, content) {
+            document.getElementById('detailTitle').textContent = title;
+            document.getElementById('detailContent').innerHTML = content;
+            updateTitle(title);
+            showView('informationDetail');
+        }
+        
+        function goBack() {
+            switch(currentView) {
+                case 'subtopics':
+                    updateTitle('Темы');
+                    showView('topics');
+                    currentTopic = '';
+                    break;
+                case 'informationList':
+                    updateTitle('Подтемы: ' + currentTopic);
+                    showView('subtopics');
+                    currentSubtopic = '';
+                    break;
+                case 'informationDetail':
+                    updateTitle('Информация: ' + currentSubtopic);
+                    showView('informationList');
+                    break;
+            }
+        }
+        
+        function addTopic() {
+            const input = document.getElementById('newTopicInput');
+            if (input.value.trim()) {
+                const button = document.createElement('button');
+                button.className = 'item-button';
+                button.textContent = input.value;
+                button.onclick = () => selectTopic(input.value);
+                document.getElementById('topicsList').appendChild(button);
+                input.value = '';
+            }
+        }
+        
+        function addSubtopic() {
+            const input = document.getElementById('newSubtopicInput');
+            if (input.value.trim()) {
+                const button = document.createElement('button');
+                button.className = 'item-button';
+                button.textContent = input.value;
+                button.onclick = () => selectSubtopic(input.value);
+                document.getElementById('subtopicsList').appendChild(button);
+                input.value = '';
+            }
+        }
+        
+        function addInformation() {
+            const titleInput = document.getElementById('newInfoTitleInput');
+            const contentInput = document.getElementById('newInfoContentInput');
+            
+            if (titleInput.value.trim() && contentInput.value.trim()) {
+                const div = document.createElement('div');
+                div.className = 'info-item';
+                div.onclick = () => selectInformation(titleInput.value, contentInput.value);
+                div.innerHTML = `
+                    <div class="info-title">${titleInput.value}</div>
+                    <div class="info-preview">${contentInput.value.substring(0, 100)}...</div>
+                `;
+                document.getElementById('informationList').appendChild(div);
+                titleInput.value = '';
+                contentInput.value = '';
+            }
+        }
+        
+        // Back button event
+        document.getElementById('backButton').onclick = goBack;
+        
+        // Enter key support for inputs
+        document.getElementById('newTopicInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addTopic();
+        });
+        
+        document.getElementById('newSubtopicInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addSubtopic();
+        });
+    </script>
+</body>
+</html>
