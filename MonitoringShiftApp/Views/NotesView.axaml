@@ -1,0 +1,120 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MonitoringShiftApp.ViewModels"
+             x:Class="MonitoringShiftApp.Views.NotesView"
+             x:DataType="vm:NotesViewModel">
+  
+  <Design.DataContext>
+    <vm:NotesViewModel/>
+  </Design.DataContext>
+
+  <Grid ColumnDefinitions="300,*" Margin="20">
+    
+    <!-- Left Panel - Notes List -->
+    <Border Grid.Column="0"
+            Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+            CornerRadius="8"
+            Padding="15"
+            Margin="0,0,10,0">
+      
+      <StackPanel Spacing="15">
+        
+        <!-- Header -->
+        <TextBlock Text="Заметки"
+                   FontSize="20"
+                   FontWeight="SemiBold"/>
+        
+        <!-- Add New Note -->
+        <StackPanel Spacing="10">
+          <TextBox Text="{Binding NewNoteTitle}"
+                   Watermark="Название заметки"
+                   FontSize="14"/>
+          <TextBox Text="{Binding NewNoteContent}"
+                   Watermark="Содержание заметки"
+                   AcceptsReturn="True"
+                   TextWrapping="Wrap"
+                   Height="80"
+                   FontSize="12"/>
+          <Button Content="Добавить заметку"
+                  Command="{Binding AddNoteCommand}"
+                  HorizontalAlignment="Stretch"
+                  FontSize="12"/>
+        </StackPanel>
+        
+        <!-- Notes List -->
+        <ScrollViewer Height="400">
+          <ItemsControl ItemsSource="{Binding Notes}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
+                        CornerRadius="4"
+                        Padding="10"
+                        Margin="0,0,0,8">
+                  <StackPanel>
+                    <TextBlock Text="{Binding Title}"
+                               FontWeight="Medium"
+                               FontSize="14"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding CreatedAt, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}"
+                               FontSize="10"
+                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,5,0,0">
+                      <Button Content="Редактировать"
+                              Command="{Binding $parent[UserControl].((vm:NotesViewModel)DataContext).EditNoteCommand}"
+                              CommandParameter="{Binding}"
+                              FontSize="10"
+                              Padding="5,2"/>
+                      <Button Content="Удалить"
+                              Command="{Binding $parent[UserControl].((vm:NotesViewModel)DataContext).DeleteNoteCommand}"
+                              CommandParameter="{Binding}"
+                              FontSize="10"
+                              Padding="5,2"
+                              Background="#F44336"/>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+        
+      </StackPanel>
+    </Border>
+    
+    <!-- Right Panel - Note Editor -->
+    <Border Grid.Column="1"
+            Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+            CornerRadius="8"
+            Padding="20"
+            Margin="10,0,0,0">
+      
+      <StackPanel Spacing="15" IsVisible="{Binding IsEditing}">
+        
+        <TextBlock Text="Редактирование заметки"
+                   FontSize="20"
+                   FontWeight="SemiBold"/>
+        
+        <TextBlock Text="{Binding SelectedNote.Title}"
+                   FontSize="16"
+                   FontWeight="Medium"/>
+        
+        <TextBox Text="{Binding NewNoteContent}"
+                 AcceptsReturn="True"
+                 TextWrapping="Wrap"
+                 Height="300"
+                 FontSize="14"/>
+        
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <Button Content="Сохранить"
+                  Command="{Binding UpdateNoteCommand}"
+                  Background="#4CAF50"/>
+          <Button Content="Отмена"
+                  Command="{Binding CancelEditCommand}"/>
+        </StackPanel>
+        
+      </StackPanel>
+      
+    </Border>
+    
+  </Grid>
+</UserControl>

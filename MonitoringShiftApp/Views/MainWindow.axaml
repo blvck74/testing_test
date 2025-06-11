@@ -1,0 +1,194 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:MonitoringShiftApp.ViewModels"
+        xmlns:views="using:MonitoringShiftApp.Views"
+        xmlns:converters="using:MonitoringShiftApp.Converters"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="MonitoringShiftApp.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Дежурная смена Мониторинга"
+        MinWidth="1000"
+        MinHeight="700">
+
+    <Window.Resources>
+        <converters:BoolToThemeTextConverter x:Key="BoolToThemeTextConverter"/>
+    </Window.Resources>
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid>
+        <!-- Login View (when not authenticated) -->
+        <views:LoginView DataContext="{Binding LoginViewModel}"
+                         IsVisible="{Binding $parent[Window].DataContext.IsAuthenticated, Converter={x:Static BoolConverters.Not}}"/>
+        
+        <!-- Main Application (when authenticated) -->
+        <Grid IsVisible="{Binding IsAuthenticated}" ColumnDefinitions="250,*">
+            
+            <!-- Left Sidebar -->
+            <Border Grid.Column="0"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                    BorderThickness="0,0,1,0">
+                
+                <StackPanel Spacing="0">
+                    
+                    <!-- App Title -->
+                    <Border Background="{DynamicResource SystemControlBackgroundAccentBrush}"
+                            Padding="20,15">
+                        <TextBlock Text="Мониторинг"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"/>
+                    </Border>
+                    
+                    <!-- Navigation Tabs -->
+                    <StackPanel Spacing="2" Margin="10">
+                        
+                        <Button Content="📊 Дашборд"
+                                Command="{Binding SelectTabCommand}"
+                                CommandParameter="Dashboard"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Padding="15,12"
+                                FontSize="14"
+                                Classes="nav-button"/>
+                        
+                        <Button Content="🔧 Работы"
+                                Command="{Binding SelectTabCommand}"
+                                CommandParameter="Works"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Padding="15,12"
+                                FontSize="14"
+                                Classes="nav-button"/>
+                        
+                        <Button Content="⚠️ Аварии"
+                                Command="{Binding SelectTabCommand}"
+                                CommandParameter="Incidents"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Padding="15,12"
+                                FontSize="14"
+                                Classes="nav-button"/>
+                        
+                        <Button Content="🔄 Передача смены"
+                                Command="{Binding SelectTabCommand}"
+                                CommandParameter="ShiftTransfer"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Padding="15,12"
+                                FontSize="14"
+                                Classes="nav-button"/>
+                        
+                        <Button Content="📋 Отдел Г"
+                                Command="{Binding SelectTabCommand}"
+                                CommandParameter="DepartmentG"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Padding="15,12"
+                                FontSize="14"
+                                Classes="nav-button"/>
+                        
+                        <Button Content="💾 МЗ"
+                                Command="{Binding SelectTabCommand}"
+                                CommandParameter="MZ"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Padding="15,12"
+                                FontSize="14"
+                                Classes="nav-button"/>
+                        
+                        <Button Content="📝 Заметки"
+                                Command="{Binding SelectTabCommand}"
+                                CommandParameter="Notes"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Padding="15,12"
+                                FontSize="14"
+                                Classes="nav-button"/>
+                        
+                        <Button Content="⚙️ Параметры"
+                                Command="{Binding SelectTabCommand}"
+                                CommandParameter="Settings"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Padding="15,12"
+                                FontSize="14"
+                                Classes="nav-button"/>
+                        
+                    </StackPanel>
+                    
+                    <!-- User Info and Controls -->
+                    <Border Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
+                            Padding="15"
+                            Margin="10,20,10,10"
+                            CornerRadius="8">
+                        
+                        <StackPanel Spacing="10">
+                            
+                            <!-- User Name -->
+                            <TextBlock Text="{Binding CurrentUserName}"
+                                       FontWeight="Medium"
+                                       FontSize="14"
+                                       HorizontalAlignment="Center"/>
+                            
+                            <!-- Theme Toggle -->
+                            <Button Content="{Binding IsDarkTheme, Converter={StaticResource BoolToThemeTextConverter}}"
+                                    Command="{Binding ToggleThemeCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    FontSize="12"
+                                    Padding="10,8"/>
+                            
+                            <!-- Logout -->
+                            <Button Content="🚪 Выход"
+                                    Command="{Binding LogoutCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    FontSize="12"
+                                    Padding="10,8"
+                                    Background="#F44336"/>
+                            
+                        </StackPanel>
+                    </Border>
+                    
+                </StackPanel>
+            </Border>
+            
+            <!-- Main Content Area -->
+            <ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}">
+                <ContentControl.DataTemplates>
+                    <DataTemplate DataType="vm:DashboardViewModel">
+                        <views:DashboardView/>
+                    </DataTemplate>
+                    <DataTemplate DataType="vm:NotesViewModel">
+                        <views:NotesView/>
+                    </DataTemplate>
+                    <DataTemplate DataType="vm:DepartmentGViewModel">
+                        <views:DepartmentGView/>
+                    </DataTemplate>
+                </ContentControl.DataTemplates>
+            </ContentControl>
+            
+        </Grid>
+    </Grid>
+
+    <Window.Styles>
+        <Style Selector="Button.nav-button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="0,2"/>
+        </Style>
+        <Style Selector="Button.nav-button:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}"/>
+        </Style>
+        <Style Selector="Button.nav-button:pressed">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}"/>
+        </Style>
+    </Window.Styles>
+
+</Window>

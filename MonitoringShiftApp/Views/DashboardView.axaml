@@ -1,0 +1,119 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MonitoringShiftApp.ViewModels"
+             x:Class="MonitoringShiftApp.Views.DashboardView"
+             x:DataType="vm:DashboardViewModel">
+  
+  <Design.DataContext>
+    <vm:DashboardViewModel/>
+  </Design.DataContext>
+
+  <ScrollViewer>
+    <StackPanel Margin="20" Spacing="20">
+      
+      <!-- Header -->
+      <TextBlock Text="Дашборд"
+                 FontSize="28"
+                 FontWeight="Bold"
+                 Margin="0,0,0,10"/>
+      
+      <!-- Statistics Cards -->
+      <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto" Margin="0,0,0,20">
+        <Grid.Styles>
+          <Style Selector="Border.stat-card">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="5"/>
+          </Style>
+        </Grid.Styles>
+        
+        <!-- Works Card -->
+        <Border Grid.Column="0" Classes="stat-card">
+          <StackPanel>
+            <TextBlock Text="Работы"
+                       FontSize="16"
+                       FontWeight="Medium"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+            <TextBlock Text="{Binding TotalWorks}"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       Foreground="#4CAF50"/>
+          </StackPanel>
+        </Border>
+        
+        <!-- Incidents Card -->
+        <Border Grid.Column="1" Classes="stat-card">
+          <StackPanel>
+            <TextBlock Text="Аварии"
+                       FontSize="16"
+                       FontWeight="Medium"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+            <TextBlock Text="{Binding TotalIncidents}"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       Foreground="#F44336"/>
+          </StackPanel>
+        </Border>
+        
+        <!-- New Tickets Card -->
+        <Border Grid.Column="2" Classes="stat-card">
+          <StackPanel>
+            <TextBlock Text="Новые тикеты"
+                       FontSize="16"
+                       FontWeight="Medium"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+            <TextBlock Text="{Binding NewTickets}"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       Foreground="#FF9800"/>
+          </StackPanel>
+        </Border>
+      </Grid>
+      
+      <!-- Recent Activity -->
+      <Border Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+              CornerRadius="8"
+              Padding="20">
+        <StackPanel Spacing="15">
+          <TextBlock Text="Последние обновления"
+                     FontSize="20"
+                     FontWeight="SemiBold"/>
+          
+          <StackPanel Spacing="10">
+            <Border Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
+                    CornerRadius="4"
+                    Padding="15">
+              <StackPanel>
+                <TextBlock Text="Система мониторинга обновлена"
+                           FontWeight="Medium"/>
+                <TextBlock Text="Обновление системы мониторинга завершено успешно"
+                           FontSize="12"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+              </StackPanel>
+            </Border>
+            
+            <Border Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
+                    CornerRadius="4"
+                    Padding="15">
+              <StackPanel>
+                <TextBlock Text="Новые тикеты в отделе Г"
+                           FontWeight="Medium"/>
+                <TextBlock Text="Поступило 3 новых тикета для обработки"
+                           FontSize="12"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+      
+      <!-- Last Update -->
+      <TextBlock Text="{Binding LastUpdateTime, StringFormat='Последнее обновление: {0}'}"
+                 FontSize="12"
+                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                 HorizontalAlignment="Right"/>
+      
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

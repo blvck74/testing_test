@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MonitoringShiftApp.ViewModels"
+             x:Class="MonitoringShiftApp.Views.LoginView"
+             x:DataType="vm:LoginViewModel">
+  
+  <Design.DataContext>
+    <vm:LoginViewModel/>
+  </Design.DataContext>
+
+  <Border Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+          CornerRadius="8"
+          Padding="40"
+          MaxWidth="400"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center">
+    
+    <StackPanel Spacing="20">
+      
+      <!-- Logo/Title -->
+      <TextBlock Text="Дежурная смена Мониторинга"
+                 FontSize="24"
+                 FontWeight="Bold"
+                 HorizontalAlignment="Center"
+                 Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+      
+      <!-- Username -->
+      <StackPanel Spacing="8">
+        <TextBlock Text="Имя пользователя:"
+                   FontWeight="Medium"/>
+        <TextBox Text="{Binding Username}"
+                 Watermark="Введите имя пользователя"
+                 FontSize="14"/>
+      </StackPanel>
+      
+      <!-- Password -->
+      <StackPanel Spacing="8">
+        <TextBlock Text="Пароль:"
+                   FontWeight="Medium"/>
+        <TextBox Text="{Binding Password}"
+                 PasswordChar="*"
+                 Watermark="Введите пароль"
+                 FontSize="14"/>
+      </StackPanel>
+      
+      <!-- Error Message -->
+      <TextBlock Text="{Binding ErrorMessage}"
+                 Foreground="Red"
+                 FontSize="12"
+                 TextWrapping="Wrap"
+                 IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+      
+      <!-- Login Button -->
+      <Button Content="Войти"
+              Command="{Binding LoginCommand}"
+              IsEnabled="{Binding !IsLoading}"
+              HorizontalAlignment="Stretch"
+              HorizontalContentAlignment="Center"
+              FontSize="14"
+              Padding="0,12"/>
+      
+      <!-- Loading Indicator -->
+      <ProgressBar IsIndeterminate="True"
+                   IsVisible="{Binding IsLoading}"
+                   Height="4"/>
+      
+    </StackPanel>
+  </Border>
+</UserControl>
